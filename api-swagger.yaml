@@ -1,0 +1,191 @@
+swagger: '2.0'
+info:
+  title: ISS API.
+  description:
+    Image Storage Service APIs with body, methods and routes
+  version: 2.0.0
+schemes:
+  - http
+produces:
+  - application/json
+paths:
+  /albums:
+    post:
+      summary: create albums
+      description: >-
+        create an album with name passed in the body.
+      parameters:
+        - name: name
+          in: body
+          required: true
+          schema:
+              $ref: '#/definitions/albums'
+      tags:
+        - albums
+      responses:
+        200:
+          description: Success
+        400:
+          description: Bad Request
+        409:
+          description: conflict album already exists.
+        500:
+          description: Internal Server Error
+  
+  /albums/{album_name}:
+    delete:
+      summary: Delete an album
+      description: >-
+        Delete an album, name passed in as path parameter
+      parameters:
+        - name: album_name
+          in: path
+          type: string
+          required: true
+      tags:
+        - albums
+      responses:
+        200:
+          description: Success
+        400:
+          description: Bad Request
+        404:
+          description: album doesn't exist.
+        500:
+          description: Internal Server Error
+  
+  /albums/{album_name}/images:
+    post:
+      summary: upload an image to an album
+      description: >-
+        upload an image
+      consumes:
+         - multipart/form-data
+      parameters:
+        - name: album_name
+          in: path
+          type: string
+          required: true
+        - in: formData
+          name: image
+          type: file
+          description: The file to upload.
+      tags:
+        - images
+      responses:
+        200:
+          description: Success
+        400:
+          description: Bad Request
+        404:
+          description: album doesn't exist.
+        409:
+          description: image already exist.
+        500:
+          description: Internal Server Error
+          
+    get:
+      summary: get all images details in an album
+      description: >-
+        get all images name and url
+      parameters:
+        - name: album_name
+          in: path
+          type: string
+          required: true
+      tags:
+        - images
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/get_images'
+        400:
+          description: Bad Request
+        404:
+          description: album doesn't exist.
+        500:
+          description: Internal Server Error
+          
+  /albums/{album_name}/images/{image_name}:
+    get:
+      summary: download an image from an album
+      description: >-
+        download an image
+      parameters:
+        - name: album_name
+          in: path
+          type: string
+          required: true
+        - name: image_name
+          in: path
+          type: string
+          required: true
+      tags:
+        - images
+      responses:
+        200:
+          description: Success (downloads the image)
+        400:
+          description: Bad Request
+        404:
+          description: album/image doesn't exist.
+        500:
+          description: Internal Server Error
+          
+    delete:
+      summary: delete an image from an album
+      description: >-
+        delete an image
+      parameters:
+        - name: album_name
+          in: path
+          type: string
+          required: true
+        - name: image_name
+          in: path
+          type: string
+          required: true
+      tags:
+        - images
+      responses:
+        200:
+          description: Success (delete the image)
+        400:
+          description: Bad Request
+        404:
+          description: album/image doesn't exist.
+        500:
+          description: Internal Server Error
+          
+definitions:
+  albums:
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        description: name of album to be created
+        type: string
+  
+  get_image:
+    type: object
+    required:
+      - image
+      - url
+    properties:
+      name:
+        description: name of image
+        type: string
+      url:
+        description: url to download image
+        type: string
+  
+  get_images:
+    type: object
+    properties:
+      value: 
+        description: all images in an album list
+        type: array
+        items:
+          $ref: '#/definitions/get_image'
