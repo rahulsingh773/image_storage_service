@@ -8,7 +8,7 @@ Compile & Build binary:<br>
 
 build docker image:<br>
     ```
-    docker build -t image_server.
+    docker build -t image_server .
     ```
 
 bring up kafka-zk:<br>
